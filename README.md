@@ -2,7 +2,7 @@
 Ein modernes, responsives **Dashboard für Atera**, das **Tickets und Alerts** übersichtlich darstellt.  
 Unterstützt **Pagination** und **Kundenfilterung**.  
 
-![Atera Dashboard Screenshot](https://via.placeholder.com/1200x600.png?text=Atera+Dashboard)  
+![Atera Dashboard Screenshot](https://ramgesoft.com/uploads/Atera-Dashboard.png)  
 
 ---
 
@@ -23,7 +23,7 @@ Unterstützt **Pagination** und **Kundenfilterung**.
 
 ### **📥 Repository klonen**  
 ```
-git clone https://github.com/dein-username/atera-dashboard.git
+git clone https://github.com/RamgeSoft/atera-dashboard.git
 cd atera-dashboard
 ```
 
