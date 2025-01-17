@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="de" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atera Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-200 min-h-screen p-6">
+
+    <h1 class="text-3xl font-semibold text-gray-800 mb-6 text-center text-gray-700 dark:text-gray-300">Atera Dashboard</h1>
+
+
+    <!-- Kunden-Filter -->
+    <div class="mb-6 w-full max-w-lg mx-auto">
+        <label class="block text-gray-700 dark:text-gray-300 font-bold mb-2">Filter nach Kunden:</label>
+        <select id="customerFilter" class="p-2 border rounded w-full bg-white text-gray-900 dark:bg-gray-800 dark:text-white" onchange="saveFilterAndFetchData()">
+            <option value="">Alle Kunden</option>
+        </select>
+    </div>
+
+    <!-- Status-Übersicht -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 w-full max-w-7xl mx-auto mb-6">
+        <div class="bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-300 p-6 rounded-lg shadow-md text-center">
+            <h2 class="text-lg font-bold">Open Tickets</h2>
+            <p id="ticketsCount" class="text-3xl font-semibold text-blue-500">0</p>
+        </div>
+        <div class="bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-300 p-6 rounded-lg shadow-md text-center">
+            <h2 class="text-lg font-bold">Pending</h2>
+            <p id="pendingTickets" class="text-3xl font-semibold text-yellow-500">0</p>
+        </div>
+        <div class="bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-300 p-6 rounded-lg shadow-md text-center">
+            <h2 class="text-lg font-bold">Overdue</h2>
+            <p id="overdueTickets" class="text-3xl font-semibold text-red-500">0</p>
+        </div>
+        <div class="bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-300 p-6 rounded-lg shadow-md text-center">
+            <h2 class="text-lg font-bold">Alerts</h2>
+            <p id="alertsCount" class="text-3xl font-semibold text-red-500">0</p>
+        </div>
+    </div>
+
+    <!-- Tickets und Alerts -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-7xl mx-auto">
+        <!-- Unassigned Tickets -->
+        <div class="bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-300 p-6 rounded-lg shadow-md">
+            <h2 class="text-xl font-semibold mb-4">Unassigned Tickets</h2>
+            <div id="ticketList"></div>
+            <div class="flex justify-center mt-4" id="ticketPagination"></div>
+        </div>
+
+        <!-- Alerts -->
+        <div class="bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-300 p-6 rounded-lg shadow-md">
+            <h2 class="text-xl font-semibold mb-4">Recent Alerts</h2>
+            <div id="alertList"></div>
+            <div class="flex justify-center mt-4" id="alertPagination"></div>
+        </div>
+    </div>
+
+
+    <script>
+        let currentPage = { tickets: 1, alerts: 1 };
+        const perPage = 5;
+
+        function saveFilterAndFetchData() {
+            let customerId = document.getElementById("customerFilter").value;
+            localStorage.setItem("selectedCustomer", customerId);
+            fetchData(1, "tickets");
+            fetchData(1, "alerts");
+        }
+
+        function fetchData(page = 1, type = "tickets") {
+            let customerId = localStorage.getItem("selectedCustomer") || "";
+            fetch(`api.php?customer=${encodeURIComponent(customerId)}&page=${page}&type=${type}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (type === "tickets") {
+                        document.getElementById("ticketsCount").innerText = data.ticketsTotal;
+                        renderTickets(data.latestTickets);
+                        renderPagination(data.ticketsTotal, "ticketPagination", "tickets");
+                    } else if (type === "alerts") {
+                        document.getElementById("alertsCount").innerText = data.alertsTotal;
+                        renderAlerts(data.alerts);
+                        renderPagination(data.alertsTotal, "alertPagination", "alerts");
+                    }
+
+                    // Kundenliste aktualisieren und gewählten Kunden setzen
+                    let customerFilter = document.getElementById("customerFilter");
+                    customerFilter.innerHTML = '<option value="">Alle Kunden</option>';
+                    data.customers.forEach(customer => {
+                        let option = document.createElement("option");
+                        option.value = customer.CustomerID;
+                        option.text = customer.CustomerName;
+                        if (customer.CustomerID == customerId) option.selected = true;
+                        customerFilter.appendChild(option);
+                    });
+                })
+                .catch(error => console.error("Fehler beim Abrufen der Daten:", error));
+        }
+
+        function renderTickets(tickets) {
+            let container = document.getElementById("ticketList");
+            container.innerHTML = tickets.map(ticket => `
+                <div class="border-b py-2 flex justify-between">
+                    <div>
+                        <p class="text-blue-500 font-bold">#${ticket.TicketID} ${ticket.TicketTitle}</p>
+                        <p class="text-gray-600 text-sm dark:text-white">${ticket.EndUserEmail}</p>
+                    </div>
+                    <span class="px-2 py-1 text-sm font-semibold rounded ${getTicketStatusColor(ticket.TicketStatus)}">${ticket.TicketStatus}</span>
+                </div>
+            `).join("");
+        }
+
+        function renderAlerts(alerts) {
+            let container = document.getElementById("alertList");
+            container.innerHTML = alerts.map(alert => `
+                <div class="border-b py-2 flex justify-between">
+                    <div>
+                        <p class="text-gray-700 dark:text-white">${alert.AlertMessage}</p>
+                        <p class="text-blue-500 text-sm">${alert.DeviceName}</p>
+                    </div>
+                    <span class="px-2 py-1 text-sm font-semibold rounded ${getAlertSeverityColor(alert.Severity)}">${alert.Severity}</span>
+                </div>
+            `).join("");
+        }
+
+        function getTicketStatusColor(status) {
+            switch (status) {
+                case "Open": return "bg-blue-100 text-blue-700";
+                case "Pending": return "bg-yellow-100 text-yellow-700";
+                case "Overdue": return "bg-red-100 text-red-700";
+                default: return "bg-gray-100 text-gray-700";
+            }
+        }
+
+        function getAlertSeverityColor(severity) {
+            switch (severity) {
+                case "Critical": return "bg-red-100 text-red-700";
+                case "Warning": return "bg-yellow-100 text-yellow-700";
+                default: return "bg-gray-100 text-gray-700";
+            }
+        }
+
+        function renderPagination(totalItems, paginationId, type) {
+            let pages = Math.ceil(totalItems / perPage);
+            let pagination = document.getElementById(paginationId);
+            pagination.innerHTML = Array.from({ length: pages }, (_, i) => `
+                <button class="px-3 py-1 mx-1 bg-black-300 rounded ${currentPage[type] === i + 1 ? "bg-gray-500 text-white" : ""}" onclick="changePage(${i + 1}, '${type}')">${i + 1}</button>
+            `).join("");
+        }
+
+        function changePage(page, type) {
+            currentPage[type] = page;
+            fetchData(page, type);
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            fetchData(1, "tickets");
+            fetchData(1, "alerts");
+        });
+
+        setInterval(() => {
+            fetchData(currentPage.tickets, "tickets");
+            fetchData(currentPage.alerts, "alerts");
+        }, 30000);
+    </script>
+
+</body>
+</html>
