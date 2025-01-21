@@ -19,7 +19,8 @@ Unterstützt **Pagination** und **Kundenfilterung**.
 ### **🔧 Voraussetzungen**  
 - **PHP 8+** (für die API-Abfragen)  
 - **Webserver** (z. B. Apache, Nginx oder PHP-Built-in Server)  
-- **Git** (optional für Repository-Verwaltung)  
+- **Git** (optional für Repository-Verwaltung)
+- **Verzeichnis** Die Website wird in einem Passwort oder nicht von aussen erreichbaren Pfad gehosted.
 
 ### **📥 Repository klonen**  
 ```
