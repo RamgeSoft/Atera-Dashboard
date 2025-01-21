@@ -2,7 +2,7 @@
 Ein modernes, responsives **Dashboard für Atera**, das **Tickets und Alerts** übersichtlich darstellt.  
 Unterstützt **Pagination** und **Kundenfilterung**.  
 
-![Atera Dashboard Screenshot](https://ramgesoft.com/uploads/Atera-Dashboard-1.png)  
+![Atera Dashboard Screenshot](https://ramgesoft.com/uploads/Atera-Dashboard.png)  
 
 ---
 
