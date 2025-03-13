@@ -2,7 +2,7 @@
 Ein modernes, responsives **Dashboard für Atera**, das **Tickets und Alerts** übersichtlich darstellt.  
 Unterstützt **Pagination** und **Kundenfilterung**.  
 
-![Atera Dashboard Screenshot](https://ramgesoft.com/uploads/Atera-Dashboard.png)  
+![Atera Dashboard Screenshot](https://ramgesoft.com/uploads/Atera-Dashboard-1.png)  
 
 ---
 
@@ -19,7 +19,8 @@ Unterstützt **Pagination** und **Kundenfilterung**.
 ### **🔧 Voraussetzungen**  
 - **PHP 8+** (für die API-Abfragen)  
 - **Webserver** (z. B. Apache, Nginx oder PHP-Built-in Server)  
-- **Git** (optional für Repository-Verwaltung)  
+- **Git** (optional für Repository-Verwaltung)
+- **Verzeichnis** Die Website wird in einem Passwort oder nicht von aussen erreichbaren Pfad gehosted.
 
 ### **📥 Repository klonen**  
 ```
