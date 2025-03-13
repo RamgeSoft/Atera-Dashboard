@@ -66,10 +66,27 @@ if ($type == "tickets") {
         return strpos($ticket["EndUserLastName"], "ALERT:") !== 0;
     });
     
+    // Gesamte gefilterte Tickets
     $totalTickets = count($filteredTickets);
+    
+    // Berechnung der Totals für "Open" und "Pending" Tickets
+    $openTicketsCount = count(array_filter($filteredTickets, function ($ticket) {
+        return isset($ticket["ticketStatus"]) && $ticket["ticketStatus"] === "Open";
+    }));
+    
+    $pendingTicketsCount = count(array_filter($filteredTickets, function ($ticket) {
+        return isset($ticket["ticketStatus"]) && $ticket["ticketStatus"] === "Pending";
+    }));
+    
+    // Pagination auf alle gefilterten Tickets anwenden
     $pagedTickets = array_slice(array_values($filteredTickets), ($page - 1) * $perPage, $perPage);
     
-    $results["ticketsTotal"] = $totalTickets;
+    // "ticketsTotal" als Array mit separaten Zählungen zurückgeben
+    $results["ticketsTotal"] = [
+         "openTickets"    => $openTicketsCount,
+         "pendingTickets" => $pendingTicketsCount,
+         "all"            => $totalTickets // Optional, falls der Gesamtwert benötigt wird
+    ];
     $results["latestTickets"] = $pagedTickets;
     
 } else {

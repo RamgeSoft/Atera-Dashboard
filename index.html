@@ -74,9 +74,10 @@
                 .then(response => response.json())
                 .then(data => {
                     if (type === "tickets") {
-                        document.getElementById("ticketsCount").innerText = data.ticketsTotal;
+                        document.getElementById("ticketsCount").innerText = data.ticketsTotal.openTickets;;
+                        document.getElementById("pendingTickets").innerText = data.ticketsTotal.pendingTickets;
                         renderTickets(data.latestTickets);
-                        renderPagination(data.ticketsTotal, "ticketPagination", "tickets");
+                        renderPagination(data.ticketsTotal.all, "ticketPagination", "tickets");
                     } else if (type === "alerts") {
                         document.getElementById("alertsCount").innerText = data.alertsTotal;
                         renderAlerts(data.alerts);
