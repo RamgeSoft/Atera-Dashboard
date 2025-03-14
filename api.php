@@ -71,11 +71,11 @@ if ($type == "tickets") {
     
     // Berechnung der Totals für "Open" und "Pending" Tickets
     $openTicketsCount = count(array_filter($filteredTickets, function ($ticket) {
-        return isset($ticket["ticketStatus"]) && $ticket["ticketStatus"] === "Open";
+        return isset($ticket["TicketStatus"]) && $ticket["TicketStatus"] === "Open";
     }));
     
     $pendingTicketsCount = count(array_filter($filteredTickets, function ($ticket) {
-        return isset($ticket["ticketStatus"]) && $ticket["ticketStatus"] === "Pending";
+        return isset($ticket["TicketStatus"]) && $ticket["TicketStatus"] === "Pending";
     }));
     
     // Pagination auf alle gefilterten Tickets anwenden
